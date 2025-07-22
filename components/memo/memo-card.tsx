@@ -1,72 +1,103 @@
-"use client"
+"use client";
 
-import { Clock, FileText } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import { Play, Pause, Loader2 } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MetadataInfo } from "@/components/memo/metadata-info";
+import { useTranscriptionContext } from "@/context/TranscriptionContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface MemoCardProps {
   memo: {
-    id: string
-    filename: string
-    transcription: string
-    duration: number
-    createdAt: string
-    metadata: {
-      size: number
-      format: string
-    }
-  }
-  onClick: () => void
+    id: string;
+    filename: string;
+    uploadedAt: string;
+    transcriptionStatus: string;
+    transcript?: string;
+  };
 }
 
-export function MemoCard({ memo, onClick }: MemoCardProps) {
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
+export function MemoCard({ memo }: MemoCardProps) {
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const { toast } = useToast();
+  const togglePlay = () => {
+    if (!audio) return;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play().catch((e) => console.error("Playback failed:", e));
+    }
+
+    setIsPlaying(!isPlaying);
+  };
 
   return (
-    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-base line-clamp-1">{memo.filename}</CardTitle>
-          <Badge variant="secondary" className="ml-2 flex-shrink-0">
-            {memo.metadata.format}
-          </Badge>
+    <Card className="relative overflow-hidden transition-all hover:shadow-lg">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-base truncate max-w-[70%]">
+              {memo.filename.split("/").pop()}
+            </CardTitle>
+            <CardDescription>
+              {new Date(memo.uploadedAt).toLocaleString()}
+            </CardDescription>
+          </div>
+
+          <Button
+            size="icon"
+            variant={isPlaying ? "destructive" : "outline"}
+            onClick={togglePlay}
+            disabled={!audioUrl}
+          >
+            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+          </Button>
         </div>
-        <CardDescription className="flex items-center space-x-4 text-sm">
-          <span className="flex items-center space-x-1">
-            <Clock className="h-3 w-3" />
-            <span>{formatDuration(memo.duration)}</span>
-          </span>
-          <span>{memo.metadata.size}MB</span>
-        </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        <p className="text-sm text-gray-600 line-clamp-3">{memo.transcription}</p>
+      <CardContent className="space-y-4">
+        <MetadataInfo
+          status={memo.transcriptionStatus}
+          uploadedAt={memo.uploadedAt}
+          filename={memo.filename}
+        />
 
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">{formatDate(memo.createdAt)}</span>
+        <div className="border-t pt-3">
+          <h3 className="font-medium mb-2">Transcripción:</h3>
 
-          <Button size="sm" variant="outline">
-            <FileText className="h-4 w-4 mr-1" />
-            Ver detalles
-          </Button>
+          {isLoading ? (
+            <div className="flex items-center text-muted-foreground">
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <span>Cargando transcripción...</span>
+            </div>
+          ) : memo.transcript ? (
+            <p className="text-sm whitespace-pre-line bg-muted/50 p-3 rounded">
+              {memo.transcript}
+            </p>
+          ) : memo.transcriptionStatus === "completed" ? (
+            <p className="text-sm text-muted-foreground italic">
+              Transcripción no disponible
+            </p>
+          ) : (
+            <div className="space-y-2">
+              <div className="h-2 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="h-2 bg-gray-200 rounded-full animate-pulse w-4/5"></div>
+              <div className="h-2 bg-gray-200 rounded-full animate-pulse w-3/4"></div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

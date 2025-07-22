@@ -115,7 +115,9 @@
   --accent: oklch(0.3 0.06 15);
   --accent-foreground: oklch(0.9 0.03 15);
 
-  --destructive: oklch(0.75 0.22 25); /* Rojo brillante para destructive en oscuro */
+  --destructive: oklch(
+    0.75 0.22 25
+  ); /* Rojo brillante para destructive en oscuro */
 
   --border: oklch(0.3 0.05 15);
   --input: oklch(0.25 0.04 15);

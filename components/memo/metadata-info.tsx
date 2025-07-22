@@ -1,66 +1,64 @@
-import { Calendar, Clock, HardDrive, FileType } from "lucide-react"
+import { Clock, Check, X, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface MetadataInfoProps {
-  memo: {
-    duration: number
-    createdAt: string
-    metadata: {
-      size: number
-      format: string
-    }
-  }
+  status: string;
+  uploadedAt: string;
+  filename: string;
+  className?: string;
 }
 
-export function MetadataInfo({ memo }: MetadataInfoProps) {
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}m ${secs}s`
-  }
+export function MetadataInfo({
+  status,
+  uploadedAt,
+  filename,
+  className = "",
+}: MetadataInfoProps) {
+  const fileType = filename.split(".").pop()?.toUpperCase() || "AUDIO";
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
+  const statusMap = {
+    started: {
+      text: "Procesando",
+      icon: <Loader2 size={14} className="animate-spin mr-1" />,
+      variant: "secondary",
+    },
+    completed: {
+      text: "Completado",
+      icon: <Check size={14} className="mr-1" />,
+      variant: "success",
+    },
+    failed: {
+      text: "Fallido",
+      icon: <X size={14} className="mr-1" />,
+      variant: "destructive",
+    },
+  };
+
+  const statusInfo =
+    statusMap[status as keyof typeof statusMap] || statusMap.started;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="flex items-center space-x-2 text-sm">
-        <Calendar className="h-4 w-4 text-gray-500" />
-        <div>
-          <p className="font-medium">Fecha</p>
-          <p className="text-gray-600">{formatDate(memo.createdAt)}</p>
+    <div className={`grid grid-cols-3 gap-3 text-sm ${className}`}>
+      <div className="space-y-1">
+        <div className="text-muted-foreground">Estado</div>
+        <Badge variant={statusInfo.variant as any} className="capitalize">
+          {statusInfo.icon}
+          {statusInfo.text}
+        </Badge>
+      </div>
+
+      <div className="space-y-1">
+        <div className="text-muted-foreground">Subido</div>
+        <div className="flex items-center">
+          <Clock size={14} className="mr-1" />
+          {new Date(uploadedAt).toLocaleDateString()}
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 text-sm">
-        <Clock className="h-4 w-4 text-gray-500" />
-        <div>
-          <p className="font-medium">Duración</p>
-          <p className="text-gray-600">{formatDuration(memo.duration)}</p>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-2 text-sm">
-        <HardDrive className="h-4 w-4 text-gray-500" />
-        <div>
-          <p className="font-medium">Tamaño</p>
-          <p className="text-gray-600">{memo.metadata.size} MB</p>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-2 text-sm">
-        <FileType className="h-4 w-4 text-gray-500" />
-        <div>
-          <p className="font-medium">Formato</p>
-          <p className="text-gray-600">{memo.metadata.format}</p>
-        </div>
+      <div className="space-y-1">
+        <div className="text-muted-foreground">Duración</div>
+        <div>--:--</div>
       </div>
     </div>
-  )
+  );
 }

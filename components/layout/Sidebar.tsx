@@ -1,8 +1,15 @@
 "use client";
 
-import { Home, Mic, History, Settings, ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useSidebar } from "@/hooks/use-sidebar"
+import {
+  Home,
+  Mic,
+  History,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
@@ -10,16 +17,20 @@ const navigationItems = [
   { icon: Mic, label: "Nueva Nota", href: "/upload" },
   { icon: History, label: "Historial", href: "/history" },
   { icon: Settings, label: "Configuración", href: "/settings" },
-]
+];
 
 export function Sidebar() {
-  const { isOpen, toggle } = useSidebar()
+  const { isOpen, toggle } = useSidebar();
 
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={toggle} aria-hidden="true" />
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={toggle}
+          aria-hidden="true"
+        />
       )}
 
       {/* Sidebar */}
@@ -41,7 +52,11 @@ export function Sidebar() {
               onClick={toggle}
               aria-label={isOpen ? "Contraer sidebar" : "Expandir sidebar"}
             >
-              {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              {isOpen ? (
+                <ChevronLeft className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </Button>
           </div>
 
@@ -51,7 +66,10 @@ export function Sidebar() {
               <Button
                 key={item.href}
                 variant={item.active ? "default" : "ghost"}
-                className={cn("w-full justify-start", !isOpen && "justify-center px-2")}
+                className={cn(
+                  "w-full justify-start",
+                  !isOpen && "justify-center px-2",
+                )}
                 aria-label={item.label}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -62,5 +80,5 @@ export function Sidebar() {
         </div>
       </aside>
     </>
-  )
+  );
 }

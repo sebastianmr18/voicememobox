@@ -10,11 +10,11 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-    const { isOpen } = useSidebar();
+  const { isOpen } = useSidebar();
 
-    return (
-            <div className="min-h-screen bg-gray-50">
-<Header />
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="flex">
         <Sidebar />
 
@@ -27,5 +27,5 @@ export function AppLayout({ children }: AppLayoutProps) {
         </main>
       </div>
     </div>
-    )
+  );
 }

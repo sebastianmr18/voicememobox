@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Mic, User, LogOut, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useSidebar } from "@/hooks/use-sidebar"
+import { Mic, User, LogOut, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/hooks/use-sidebar";
 
 export function Header() {
-  const { toggle } = useSidebar()
+  const { toggle } = useSidebar();
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -38,7 +38,12 @@ export function Header() {
               <span>Usuario Demo</span>
             </div>
 
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900" aria-label="Cerrar sesión">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-600 hover:text-gray-900"
+              aria-label="Cerrar sesión"
+            >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Salir</span>
             </Button>
@@ -46,5 +51,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }
