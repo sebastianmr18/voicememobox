@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MetadataInfo } from "@/components/memo/metadata-info";
-import { useTranscriptionContext } from "@/context/TranscriptionContext";
 import { useToast } from "@/hooks/use-toast";
 
 interface MemoCardProps {

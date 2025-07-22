@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useRef } from "react";
 import { Upload, Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,11 +14,14 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useTranscriptionContext } from "@/context/TranscriptionContext";
+import { Progress } from "@/components/ui/progress";
+import { set } from "date-fns";
 
 export function UploadMemoCard() {
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,6 +94,7 @@ export function UploadMemoCard() {
 
   const uploadAudio = async (audioData: Blob | File, userId = "anonymous") => {
     setIsUploading(true);
+    setUploadProgress(0);
     try {
       // Solicitud de URL prefirmada
       const fileType = audioData.type;
@@ -104,6 +107,14 @@ export function UploadMemoCard() {
       const uploadRes = await axios.put(url, audioData, {
         headers: {
           "Content-Type": fileType,
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percent);
+          }
         },
       });
 
@@ -139,6 +150,7 @@ export function UploadMemoCard() {
     } finally {
       setIsUploading(false);
       setRecordingTime(0);
+      setUploadProgress(0);
     }
   };
 
@@ -161,78 +173,83 @@ export function UploadMemoCard() {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Recording Section */}
-        <div className="text-center space-y-4">
-          {isRecording && (
-            <div className="text-2xl font-mono text-red-600">
-              {formatTime(recordingTime)}
+        {isUploading ? (
+          // Estado de carga durante la subida
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+            <p className="text-lg font-medium">Se esta proceando tu nota de voz...</p>
+            <p className="text-sm text-gray-500">
+              Por favor espera, esto puede tardar unos momentos.
+            </p>
+          </div>
+        ) : (
+          // Contenido normal cuando no hay subida
+          <>
+            {/* Recording Section */}
+            <div className="text-center space-y-4">
+              {isRecording && (
+                <div className="text-2xl font-mono text-red-600">
+                  {formatTime(recordingTime)}
+                </div>
+              )}
+
+              <div className="flex justify-center space-x-4">
+                {!isRecording ? (
+                  <Button
+                    onClick={startRecording}
+                    size="lg"
+                    className="bg-red-600 hover:bg-red-700"
+                    disabled={isUploading}
+                  >
+                    <Mic className="h-5 w-5 mr-2" />
+                    Comenzar Grabación
+                  </Button>
+                ) : (
+                  <Button onClick={stopRecording} size="lg" variant="destructive">
+                    <MicOff className="h-5 w-5 mr-2" />
+                    Detener Grabación
+                  </Button>
+                )}
+              </div>
             </div>
-          )}
 
-          <div className="flex justify-center space-x-4">
-            {!isRecording ? (
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">o</span>
+              </div>
+            </div>
+
+            {/* File Upload Section */}
+            <div className="text-center space-y-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                aria-label="Seleccionar archivo de audio"
+              />
+
               <Button
-                onClick={startRecording}
+                onClick={() => fileInputRef.current?.click()}
+                variant="outline"
                 size="lg"
-                className="bg-red-600 hover:bg-red-700"
-                disabled={isUploading}
+                disabled={isRecording || isUploading}
               >
-                <Mic className="h-5 w-5 mr-2" />
-                Comenzar Grabación
-              </Button>
-            ) : (
-              <Button onClick={stopRecording} size="lg" variant="destructive">
-                <MicOff className="h-5 w-5 mr-2" />
-                Detener Grabación
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">o</span>
-          </div>
-        </div>
-
-        {/* File Upload Section */}
-        <div className="text-center space-y-4">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="audio/*"
-            onChange={handleFileUpload}
-            className="hidden"
-            aria-label="Seleccionar archivo de audio"
-          />
-
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            variant="outline"
-            size="lg"
-            disabled={isRecording || isUploading}
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Subiendo...
-              </>
-            ) : (
-              <>
                 <Upload className="h-5 w-5 mr-2" />
                 Subir Archivo
-              </>
-            )}
-          </Button>
+              </Button>
 
-          <p className="text-sm text-gray-500">
-            Formatos soportados: MP3, WAV, M4A (máx. 25MB)
-          </p>
-        </div>
+              <p className="text-sm text-gray-500">
+                Formatos soportados: MP3, WAV, M4A (máx. 25MB)
+              </p>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
