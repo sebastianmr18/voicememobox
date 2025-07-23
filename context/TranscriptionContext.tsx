@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Transcription } from "@/types/transcription";
 
 interface ContextType {
-  latestTranscription: Transcription;
+  latestTranscription: Transcription | undefined;
   addTranscription: (t: Transcription) => void;
 }
 
@@ -25,7 +25,7 @@ export const TranscriptionProvider = ({
   children: React.ReactNode;
 }) => {
   const [latestTranscription, setLatestTranscription] =
-    useState<Transcription | null>(null);
+    useState<Transcription>();
 
   const addTranscription = (t: Transcription) => {
     setLatestTranscription(t);
