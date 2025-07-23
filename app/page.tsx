@@ -1,10 +1,13 @@
-import { Suspense } from "react";
+"use client";
+
+import { Suspense, useState } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
 import { UploadMemoCard } from "@/components/memo/upload-memo-card";
 import { LoadingState } from "@/components/states/loading-state";
 import { LatestTranscriptionCard } from "@/components/memo/transcription-card";
 
 export default function HomePage() {
+  const [isUploading, setIsUploading] = useState(false);
   return (
     <AppLayout>
       <div className="space-y-8">
@@ -16,7 +19,7 @@ export default function HomePage() {
           >
             Nueva Nota de Voz
           </h2>
-          <UploadMemoCard />
+          <UploadMemoCard isUploading={isUploading} setIsUploading={setIsUploading} />
         </section>
 
         {/* Pending Transcriptions */}
@@ -32,7 +35,7 @@ export default function HomePage() {
               <LoadingState message="Cargando transcripciones pendientes..." />
             }
           >
-            <LatestTranscriptionCard />
+            <LatestTranscriptionCard isUploading={isUploading} />
           </Suspense>
         </section>
       </div>

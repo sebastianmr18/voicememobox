@@ -13,8 +13,13 @@ import { useTranscriptionContext } from "@/context/TranscriptionContext";
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { MetadataInfo } from "@/components/memo/metadata-info";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+
+interface TranscripitionCardProps {
+  isUploading: boolean;
+}
 
 interface AmazonTranscribeMetadata {
   jobName: string;
@@ -39,8 +44,59 @@ interface AmazonTranscribeMetadata {
   };
 }
 
+function TranscriptionSkeleton() {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <Skeleton className="h-6 w-20" />
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Skeleton del reproductor de audio */}
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 rounded-md" />
+          <div className="space-y-1">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+        </div>
 
-export function LatestTranscriptionCard() {
+        {/* Skeleton de la transcripción */}
+        <div className="border-t pt-3 space-y-3">
+          <Skeleton className="h-5 w-32" />
+          <div className="bg-muted/50 p-3 rounded space-y-2">
+            <div className="flex items-center gap-2 mb-3">
+              <Skeleton className="h-4 w-4 rounded-full animate-spin" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+
+        {/* Skeleton de progreso animado */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+          </div>
+          <span className="text-primary font-medium">Procesando tu nota de voz...</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps) {
   const { latestTranscription } = useTranscriptionContext();
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
@@ -48,12 +104,13 @@ export function LatestTranscriptionCard() {
   const [transcriptionMetadata, setTranscriptionMetadata] =
     useState<AmazonTranscribeMetadata | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { toast } = useToast();
 
   // Obtener URL presignada para el audio
   const fetchAudioUrl = async (key: string) => {
     setLoadingAudio(true);
     try {
-      const res = await fetch(`/api/audio?key=${key}`);
+      const res = await fetch(`/api/retrieve-audio?key=${key}`);
       const data = await res.json();
       setAudioUrl(data.url);
     } catch (error) {
@@ -70,6 +127,11 @@ export function LatestTranscriptionCard() {
       const data = await res.json();
       if (data.metadata) {
         setTranscriptionMetadata(data.metadata);
+              toast({
+        title: "Exito",
+        description: "Tu transcripción se ha generado correctamente",
+        variant: "default",
+      })
       }
     } catch (error) {
       console.error("Error fetching transcription metadata:", error);
@@ -101,7 +163,6 @@ export function LatestTranscriptionCard() {
         fetchTranscriptionMetadata(latestTranscription.filename);
       }
     }
-
     // Limpiar estado de reproducción al cambiar transcripción
     setIsPlaying(false);
     setTranscriptionMetadata(null);
@@ -126,6 +187,8 @@ export function LatestTranscriptionCard() {
       audio.removeEventListener("ended", handleEnded);
     };
   }, []);
+
+  if (isUploading) return <TranscriptionSkeleton />;
 
   if (!latestTranscription) {
     return (
@@ -209,11 +272,6 @@ export function LatestTranscriptionCard() {
         </div>
 
         {/* Metadatos usando MetadataInfo */}
-        <MetadataInfo
-          status={transcriptionStatus}
-          uploadedAt={latestTranscription.uploadedAt}
-          filename={latestTranscription.filename}
-        />
 
         {/* Transcripción con sombreado de confianza y tooltip */}
         <div className="border-t pt-3">

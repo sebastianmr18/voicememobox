@@ -44,6 +44,6 @@ export function useToast() {
   return {
     toast,
     dismiss,
-    toasts: [], // Mantenemos por compatibilidad pero Sonner maneja esto internamente
+    toasts: [],
   };
 }

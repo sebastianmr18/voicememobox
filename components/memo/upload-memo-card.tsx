@@ -14,14 +14,15 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useTranscriptionContext } from "@/context/TranscriptionContext";
-import { Progress } from "@/components/ui/progress";
-import { set } from "date-fns";
 
-export function UploadMemoCard() {
-  const [isRecording, setIsRecording] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+interface UploadMemoCardProps {
+  isUploading: boolean;
+  setIsUploading: (isUploading: boolean) => void;
+}
+
+export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardProps) {
+  const [isRecording, setIsRecording] = useState(false);  
   const [recordingTime, setRecordingTime] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,7 +33,7 @@ export function UploadMemoCard() {
     filename: string,
   ): Promise<string | null> => {
     for (let i = 0; i < 20; i++) {
-      const res = await fetch(`/api/show-transcription?filename=${filename}`);
+      const res = await fetch(`/api/transcription?filename=${filename}`);
       const data = await res.json();
       if (data.transcript) return data.transcript;
       await new Promise((r) => setTimeout(r, 15000));
@@ -93,8 +94,7 @@ export function UploadMemoCard() {
   };
 
   const uploadAudio = async (audioData: Blob | File, userId = "anonymous") => {
-    setIsUploading(true);
-    setUploadProgress(0);
+    setIsUploading(true);    
     try {
       // Solicitud de URL prefirmada
       const fileType = audioData.type;
@@ -107,24 +107,10 @@ export function UploadMemoCard() {
       const uploadRes = await axios.put(url, audioData, {
         headers: {
           "Content-Type": fileType,
-        },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percent);
-          }
-        },
+        }
       });
 
       if (uploadRes.status !== 200) throw new Error("Upload failed");
-
-      toast({
-        title: "¡Éxito!",
-        description:
-          "Nota de voz subida correctamente. La transcripción comenzará en breve.",
-      });
 
       const filename = key
         .split("/")
@@ -149,8 +135,7 @@ export function UploadMemoCard() {
       });
     } finally {
       setIsUploading(false);
-      setRecordingTime(0);
-      setUploadProgress(0);
+      setRecordingTime(0);      
     }
   };
 
@@ -177,7 +162,7 @@ export function UploadMemoCard() {
           // Estado de carga durante la subida
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-            <p className="text-lg font-medium">Se esta proceando tu nota de voz...</p>
+            <p className="text-lg font-medium">Se esta procesando tu nota de voz...</p>
             <p className="text-sm text-gray-500">
               Por favor espera, esto puede tardar unos momentos.
             </p>
