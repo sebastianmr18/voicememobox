@@ -1,4 +1,3 @@
-// app/api/pending-transcriptions/route.ts
 import {
   S3Client,
   ListObjectsV2Command,
