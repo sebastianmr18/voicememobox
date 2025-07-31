@@ -1,7 +1,4 @@
-import {
-  S3Client,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse, NextRequest } from "next/server";
 
 const s3 = new S3Client({

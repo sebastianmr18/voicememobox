@@ -11,7 +11,7 @@ export function SignInButton() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setError(null);
-    try {      
+    try {
       await signIn("google", { callbackUrl: "/" });
     } catch (err: any) {
       console.error("Error during Google sign-in:", err);
@@ -38,11 +38,7 @@ export function SignInButton() {
           <span>Iniciar sesión con Google</span>
         )}
       </Button>
-      {error && (
-        <p className="text-sm text-destructive text-center">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-sm text-destructive text-center">{error}</p>}
     </div>
   );
 }

@@ -89,14 +89,18 @@ function TranscriptionSkeleton() {
             <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
             <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
           </div>
-          <span className="text-primary font-medium">Procesando tu nota de voz...</span>
+          <span className="text-primary font-medium">
+            Procesando tu nota de voz...
+          </span>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
-export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps) {
+export function LatestTranscriptionCard({
+  isUploading,
+}: TranscripitionCardProps) {
   const { latestTranscription } = useTranscriptionContext();
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
@@ -123,22 +127,23 @@ export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps
   // Obtener metadatos de transcripción (incluyendo confianza)
   const fetchTranscriptionMetadata = async (filename: string) => {
     try {
-      const res = await fetch(`/api/transcription-metadata?filename=${filename}`);
+      const res = await fetch(
+        `/api/transcription-metadata?filename=${filename}`,
+      );
       const data = await res.json();
       if (data.metadata) {
         setTranscriptionMetadata(data.metadata);
-              toast({
-        title: "Exito",
-        description: "Tu transcripción se ha generado correctamente",
-        variant: "default",
-      })
+        toast({
+          title: "Exito",
+          description: "Tu transcripción se ha generado correctamente",
+          variant: "default",
+        });
       }
     } catch (error) {
       console.error("Error fetching transcription metadata:", error);
       setTranscriptionMetadata(null);
     }
   };
-
 
   // Control de reproducción de audio
   const togglePlay = () => {
@@ -224,7 +229,7 @@ export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps
     } else {
       return "bg-red-200"; // Baja confianza
     }
-  }; 
+  };
 
   return (
     <Card className="w-full">
@@ -281,7 +286,9 @@ export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps
             <p className="text-sm whitespace-pre-line bg-muted/50 p-3 rounded">
               {transcriptionMetadata.results.items.map((item, index) => {
                 const content = item.alternatives[0]?.content;
-                const confidence = parseFloat(item.alternatives[0]?.confidence || "0");
+                const confidence = parseFloat(
+                  item.alternatives[0]?.confidence || "0",
+                );
 
                 if (item.type === "pronunciation") {
                   return (
@@ -293,8 +300,8 @@ export function LatestTranscriptionCard({ isUploading }: TranscripitionCardProps
                       {/* Tooltip para mostrar la confianza */}
                       <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
                         Confianza: {(confidence * 100).toFixed(2)}%
-                      </span>
-                      {" "} {/* Espacio después de la palabra */}
+                      </span>{" "}
+                      {/* Espacio después de la palabra */}
                     </span>
                   );
                 } else {

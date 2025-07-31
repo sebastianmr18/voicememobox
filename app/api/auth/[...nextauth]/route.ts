@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
   ],
   adapter: SupabaseAdapter({
     url: process.env.SUPABASE_URL!,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,    
+    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   }),
   session: {
     strategy: "jwt",
@@ -20,9 +20,9 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
-    error:   "/login?error",
+    error: "/login?error",
   },
-  }
+};
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

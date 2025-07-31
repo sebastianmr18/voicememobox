@@ -23,8 +23,11 @@ interface UploadMemoCardProps {
   setIsUploading: (isUploading: boolean) => void;
 }
 
-export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardProps) {
-  const [isRecording, setIsRecording] = useState(false);  
+export function UploadMemoCard({
+  isUploading,
+  setIsUploading,
+}: UploadMemoCardProps) {
+  const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -38,7 +41,6 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
     },
   });
   const email = session?.user?.email ?? "anonymous";
-
 
   const waitForTranscript = async (
     filename: string,
@@ -107,7 +109,7 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
   };
 
   const uploadAudio = async (audioData: Blob | File, userId: string) => {
-    setIsUploading(true);    
+    setIsUploading(true);
     try {
       // Solicitud de URL prefirmada
       const fileType = audioData.type;
@@ -120,7 +122,7 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
       const uploadRes = await axios.put(url, audioData, {
         headers: {
           "Content-Type": fileType,
-        }
+        },
       });
 
       if (uploadRes.status !== 200) throw new Error("Upload failed");
@@ -148,7 +150,7 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
       });
     } finally {
       setIsUploading(false);
-      setRecordingTime(0);      
+      setRecordingTime(0);
     }
   };
 
@@ -175,7 +177,9 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
           // Estado de carga durante la subida
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-            <p className="text-lg font-medium">Se esta procesando tu nota de voz...</p>
+            <p className="text-lg font-medium">
+              Se esta procesando tu nota de voz...
+            </p>
             <p className="text-sm text-gray-500">
               Por favor espera, esto puede tardar unos momentos.
             </p>
@@ -203,7 +207,11 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
                     Comenzar Grabación
                   </Button>
                 ) : (
-                  <Button onClick={stopRecording} size="lg" variant="destructive">
+                  <Button
+                    onClick={stopRecording}
+                    size="lg"
+                    variant="destructive"
+                  >
                     <MicOff className="h-5 w-5 mr-2" />
                     Detener Grabación
                   </Button>

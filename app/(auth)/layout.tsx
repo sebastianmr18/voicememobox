@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: "Accede a tu cuenta o regístrate",
 };
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

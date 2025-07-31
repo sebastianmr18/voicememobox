@@ -6,10 +6,14 @@ import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-    const { data: session, status } = useSession({
+export default function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { data: session, status } = useSession({
     required: true,
-    onUnauthenticated() {      
+    onUnauthenticated() {
       redirect("/login");
     },
   });
