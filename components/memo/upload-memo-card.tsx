@@ -14,6 +14,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useTranscriptionContext } from "@/context/TranscriptionContext";
+import { useSession } from "next-auth/react";
+import { hashEmail } from "@/lib/hash";
+import { redirect } from "next/navigation";
 
 interface UploadMemoCardProps {
   isUploading: boolean;
@@ -28,6 +31,14 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { addTranscription } = useTranscriptionContext();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+  const email = session?.user?.email ?? "anonymous";
+
 
   const waitForTranscript = async (
     filename: string,
@@ -54,7 +65,8 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
 
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunks, { type: "audio/wav" });
-        await uploadAudio(audioBlob);
+        const userId = await hashEmail(email);
+        await uploadAudio(audioBlob, userId);
         stream.getTracks().forEach((track) => track.stop());
       };
 
@@ -89,11 +101,12 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      await uploadAudio(file);
+      const userId = await hashEmail(email);
+      await uploadAudio(file, userId);
     }
   };
 
-  const uploadAudio = async (audioData: Blob | File, userId = "anonymous") => {
+  const uploadAudio = async (audioData: Blob | File, userId: string) => {
     setIsUploading(true);    
     try {
       // Solicitud de URL prefirmada

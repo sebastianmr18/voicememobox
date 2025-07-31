@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { AppLayout } from "@/components/layout/app-layout";
 import { UploadMemoCard } from "@/components/memo/upload-memo-card";
 import { LoadingState } from "@/components/states/loading-state";
 import { LatestTranscriptionCard } from "@/components/memo/transcription-card";
@@ -9,7 +8,6 @@ import { LatestTranscriptionCard } from "@/components/memo/transcription-card";
 export default function HomePage() {
   const [isUploading, setIsUploading] = useState(false);
   return (
-    <AppLayout>
       <div className="space-y-8">
         {/* Upload Section */}
         <section aria-labelledby="upload-heading">
@@ -39,6 +37,5 @@ export default function HomePage() {
           </Suspense>
         </section>
       </div>
-    </AppLayout>
   );
 }
