@@ -2,7 +2,6 @@
 
 import "@/app/globals.css";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 
@@ -17,7 +16,6 @@ export default function ProtectedLayout({
       redirect("/login");
     },
   });
-  const router = useRouter();
 
   if (status === "loading") {
     return <div className="p-6 text-center">Cargando sesión...</div>;

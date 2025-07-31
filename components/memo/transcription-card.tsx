@@ -16,6 +16,9 @@ import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useSession } from "next-auth/react";
+import { hashEmail } from "@/lib/hash";
+import { redirect } from "next/navigation";
 
 interface TranscripitionCardProps {
   isUploading: boolean;
@@ -109,6 +112,13 @@ export function LatestTranscriptionCard({
     useState<AmazonTranscribeMetadata | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+    const { data: session, status } = useSession({
+      required: true,
+      onUnauthenticated() {
+        redirect("/login");
+      },
+    });
+    const email = session?.user?.email ?? "anonymous";  
 
   // Obtener URL presignada para el audio
   const fetchAudioUrl = async (key: string) => {
@@ -126,9 +136,10 @@ export function LatestTranscriptionCard({
 
   // Obtener metadatos de transcripción (incluyendo confianza)
   const fetchTranscriptionMetadata = async (filename: string) => {
+    const userId = await hashEmail(email);
     try {
       const res = await fetch(
-        `/api/transcription-metadata?filename=${filename}`,
+        `/api/transcription-metadata?userId=${userId}&filename=${filename}`,
       );
       const data = await res.json();
       if (data.metadata) {

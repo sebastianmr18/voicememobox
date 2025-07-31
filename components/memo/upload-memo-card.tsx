@@ -40,13 +40,14 @@ export function UploadMemoCard({
       redirect("/login");
     },
   });
-  const email = session?.user?.email ?? "anonymous";
+  const email = session?.user?.email ?? "anonymous";  
 
   const waitForTranscript = async (
     filename: string,
   ): Promise<string | null> => {
+    const userId = await hashEmail(email);
     for (let i = 0; i < 20; i++) {
-      const res = await fetch(`/api/transcription?filename=${filename}`);
+      const res = await fetch(`/api/transcription?userId=${userId}&filename=${filename}`);
       const data = await res.json();
       if (data.transcript) return data.transcript;
       await new Promise((r) => setTimeout(r, 15000));
