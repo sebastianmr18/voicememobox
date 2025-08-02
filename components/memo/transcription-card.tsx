@@ -112,13 +112,13 @@ export function LatestTranscriptionCard({
     useState<AmazonTranscribeMetadata | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
-    const { data: session, status } = useSession({
-      required: true,
-      onUnauthenticated() {
-        redirect("/login");
-      },
-    });
-    const email = session?.user?.email ?? "anonymous";  
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+  const email = session?.user?.email ?? "anonymous";
 
   // Obtener URL presignada para el audio
   const fetchAudioUrl = async (key: string) => {
