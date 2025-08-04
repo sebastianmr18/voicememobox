@@ -22,23 +22,27 @@ export function SignInButton() {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Button
         onClick={handleGoogleSignIn}
         disabled={isLoading}
-        variant="outline"
-        className="w-full flex items-center justify-center space-x-2"
+        className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+        size="lg"
       >
         {isLoading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Iniciando sesión…</span>
-          </>
+          <div className="flex items-center space-x-2">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Iniciando sesión...</span>
+          </div>
         ) : (
-          <span>Iniciar sesión con Google</span>
+          <span>Continuar con Google</span>
         )}
       </Button>
-      {error && <p className="text-sm text-destructive text-center">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <p className="text-sm text-red-700 text-center">{error}</p>
+        </div>
+      )}
     </div>
   );
 }
