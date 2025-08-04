@@ -13,7 +13,7 @@ export function SignInButton() {
     setError(null);
     try {
       await signIn("google", { callbackUrl: "/" });
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error during Google sign-in:", err);
       setError("Error al iniciar sesión con Google");
     } finally {

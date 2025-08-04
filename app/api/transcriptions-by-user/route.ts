@@ -88,15 +88,15 @@ export async function GET(req: NextRequest) {
               .send(
                 new GetObjectCommand({ Bucket: bucket, Key: transcriptionKey }),
               )
-              .then((res) => streamToString(res.Body as any)),
+              .then((res) => streamToString(res.Body as Readable | null)),
 
             s3
               .send(new GetObjectCommand({ Bucket: bucket, Key: audioKey }))
-              .then((res) => streamToString(res.Body as any)),
+              .then((res) => streamToString(res.Body as Readable | null)),
 
             s3
               .send(new GetObjectCommand({ Bucket: bucket, Key: metadataKey }))
-              .then((res) => streamToString(res.Body as any)),
+              .then((res) => streamToString(res.Body as Readable | null)),
           ]);
 
           const transcriptionJson = JSON.parse(transcription);
@@ -128,50 +128,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-/*import {
-  S3Client,  
-  GetObjectCommand,
-  ListObjectsCommand
-} from "@aws-sdk/client-s3";
-import { NextResponse, NextRequest } from "next/server";
-
-const s3 = new S3Client({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
-
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId") ?? "anonymous";
-  const bucket = process.env.AWS_BUCKET_NAME!;
-
-  if (!userId)
-    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
-
-  const prefix = `transcriptions/${userId}/`;
-
-  try {
-    const res = await s3.send(
-      new ListObjectsCommand({ Bucket: bucket, Prefix: prefix }),
-    );
-    console.log(res);
-        const files = res.Contents?.map((item) => ({
-      key: item.Key,
-      lastModified: item.LastModified,
-      size: item.Size,
-    })) ?? [];
-
-    return NextResponse.json({ files });
-  } catch (error) {
-        console.error("S3 list error:", error);
-    return NextResponse.json(
-      { error: "Error listing transcriptions" },
-      { status: 500 }
-    );
-  }
-}
-*/
