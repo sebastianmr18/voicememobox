@@ -15,8 +15,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const navigationItems = [
-  { icon: Home, label: "Inicio", href: "/", isEnabled: false },
-  { icon: Mic, label: "Nueva Nota", href: "/transcribir" },
+  { icon: Mic, label: "Nueva Nota", href: "/transcribir", isEnabled: true },
   { icon: History, label: "Historial", href: "/historial" },
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];

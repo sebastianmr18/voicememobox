@@ -5,7 +5,7 @@ import { UploadMemoCard } from "@/components/memo/uploadMemoCard";
 import { LoadingState } from "@/components/states/loadingState";
 import { LatestTranscriptionCard } from "@/components/memo/transcriptionCard";
 
-export default function HomePage() {
+export default function TrancriptionPage() {
   const [isUploading, setIsUploading] = useState(false);
   return (
     <div className="space-y-8">
