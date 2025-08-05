@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { UploadMemoCard } from "@/components/memo/upload-memo-card";
-import { LoadingState } from "@/components/states/loading-state";
-import { LatestTranscriptionCard } from "@/components/memo/transcription-card";
+import { UploadMemoCard } from "@/components/memo/uploadMemoCard";
+import { LoadingState } from "@/components/states/loadingState";
+import { LatestTranscriptionCard } from "@/components/memo/transcriptionCard";
 
 export default function HomePage() {
   const [isUploading, setIsUploading] = useState(false);

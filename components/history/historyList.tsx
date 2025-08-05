@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MemoCard } from "@/components/memo/memo-card";
-import { MemoDetails } from "@/components/memo/memo-details";
-import { EmptyState } from "@/components/states/empty-state";
+import { MemoCard } from "@/components/memo/memoCard";
+import { MemoDetails } from "@/components/memo/memoDetails";
+import { EmptyState } from "@/components/states/emptyState";
 import { FileText, Grid, List } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useSession } from "next-auth/react";

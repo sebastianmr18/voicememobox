@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { LoadingState } from "@/components/states/loading-state";
-import { HistoryHeader } from "@/components/history/history-header";
-import { HistoryList } from "@/components/history/history-list";
+import { LoadingState } from "@/components/states/loadingState";
+import { HistoryHeader } from "@/components/history/historyHeader";
+import { HistoryList } from "@/components/history/historyList";
 
 export default function HistoryPage() {
   return (
