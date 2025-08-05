@@ -67,7 +67,9 @@ describe("<SignInButton />", () => {
     fireEvent.click(button);
 
     expect(mockSignIn).toHaveBeenCalledTimes(1);
-    expect(mockSignIn).toHaveBeenCalledWith("google", { callbackUrl: "/" });
+    expect(mockSignIn).toHaveBeenCalledWith("google", {
+      callbackUrl: "/transcribir",
+    });
 
     await waitFor(() => {
       expect(button).not.toBeDisabled();

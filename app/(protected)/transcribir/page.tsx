@@ -31,13 +31,7 @@ export default function HomePage() {
         >
           Tu transcripción
         </h2>
-        <Suspense
-          fallback={
-            <LoadingState message="Cargando transcripciones pendientes..." />
-          }
-        >
-          <LatestTranscriptionCard isUploading={isUploading} />
-        </Suspense>
+        <LatestTranscriptionCard isUploading={isUploading} />
       </section>
     </div>
   );

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const navigationItems = [
-  { icon: Home, label: "Inicio", href: "/" },
+  { icon: Home, label: "Inicio", href: "/", isEnabled: false },
   { icon: Mic, label: "Nueva Nota", href: "/transcribir" },
   { icon: History, label: "Historial", href: "/historial" },
   { icon: Settings, label: "Configuración", href: "/settings" },
@@ -67,21 +67,29 @@ export function Sidebar() {
           <nav className="flex-1 px-2 py-4 space-y-2">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
-              return (
+
+              const button = (
+                <Button
+                  variant={isActive ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    !isOpen && "justify-center px-2",
+                  )}
+                  aria-label={item.label}
+                  disabled={item.isEnabled === false}
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {isOpen && (
+                    <span className="ml-3 truncate">{item.label}</span>
+                  )}
+                </Button>
+              );
+
+              return item.isEnabled === false ? (
+                <div key={item.href}>{button}</div>
+              ) : (
                 <Link key={item.href} href={item.href}>
-                  <Button
-                    variant={isActive ? "default" : "ghost"}
-                    className={cn(
-                      "w-full justify-start",
-                      !isOpen && "justify-center px-2",
-                    )}
-                    aria-label={item.label}
-                  >
-                    <item.icon className="h-5 w-5 flex-shrink-0" />
-                    {isOpen && (
-                      <span className="ml-3 truncate">{item.label}</span>
-                    )}
-                  </Button>
+                  {button}
                 </Link>
               );
             })}

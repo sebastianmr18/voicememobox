@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { hashEmail } from "@/lib/hash";
 import { Button } from "@/components/ui/button";
 import { se } from "date-fns/locale";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Memo {
   id: string;
@@ -24,34 +25,133 @@ interface Memo {
   };
 }
 
+function MemoCardSkeleton({ viewMode }: { viewMode: "grid" | "list" }) {
+  if (viewMode === "list") {
+    return (
+      <div className="border rounded-lg p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4 flex-1 min-w-0">
+            <Skeleton className="h-6 w-16 rounded-md" />
+            <div className="flex-1 min-w-0 space-y-2">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </div>
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Vista grid
+  return (
+    <div className="border rounded-lg shadow-sm">
+      <div className="p-4 pb-3">
+        <div className="flex items-start justify-between mb-2">
+          <Skeleton className="h-5 w-3/4" />
+          <Skeleton className="h-5 w-12" />
+        </div>
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-12" />
+        </div>
+      </div>
+
+      <div className="p-4 pt-0 space-y-3">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-8 w-24" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function HistoryList() {
   const [memos, setMemos] = useState<Memo[]>([]);
   const [selectedMemo, setSelectedMemo] = useState<Memo | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isLoading, setIsLoading] = useState(true);
   const { data: session } = useSession();
 
   useEffect(() => {
     const getTrancrisptsByUser = async () => {
+      setIsLoading(true);
       const email = session?.user?.email ?? "anonymous";
       const userId = await hashEmail(email);
-      const response = await fetch(
-        `/api/transcriptions-by-user?userId=${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
+      try {
+        const response = await fetch(
+          `/api/transcriptions-by-user?userId=${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        },
-      );
+        );
 
-      const data = await response.json();
-      setMemos(data.memos);
+        const data = await response.json();
+        setMemos(data.memos);
+      } catch (error) {
+        console.error("Error fetching transcriptions:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     if (session?.user?.email) {
       getTrancrisptsByUser();
     }
   }, [session?.user?.email]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        {/* View Toggle Skeleton */}
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-5 w-48" />
+          <div className="flex border rounded-md">
+            <Skeleton className="h-8 w-8 rounded-none" />
+            <Skeleton className="h-8 w-8 rounded-none" />
+          </div>
+        </div>
+
+        {/* Memos Grid/List Skeleton */}
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              : "space-y-4"
+          }
+        >
+          {Array.from({ length: 6 }).map((_, index) => (
+            <MemoCardSkeleton key={index} viewMode={viewMode} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay memos, mostrar estado vacío
+  if (memos.length === 0) {
+    return (
+      <EmptyState
+        icon={FileText}
+        title="No tienes transcripciones guardadas"
+        description="Sube tu primera nota de voz para comenzar a crear tu historial"
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">

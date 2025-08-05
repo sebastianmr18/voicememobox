@@ -4,6 +4,8 @@ import "@/app/globals.css";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { LoadingState } from "@/components/states/loadingState";
+import { Suspense } from "react";
 
 export default function ProtectedLayout({
   children,
@@ -18,7 +20,9 @@ export default function ProtectedLayout({
   });
 
   if (status === "loading") {
-    return <div className="p-6 text-center">Cargando sesión...</div>;
+    return (
+      <Suspense fallback={<LoadingState message="Cargando..." />}></Suspense>
+    );
   }
 
   return <AppLayout>{children}</AppLayout>;
