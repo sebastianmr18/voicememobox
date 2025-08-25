@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Home,
   Mic,
@@ -11,16 +12,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 const navigationItems = [
-  { icon: Home, label: "Inicio", href: "/", active: true },
-  { icon: Mic, label: "Nueva Nota", href: "/upload" },
-  { icon: History, label: "Historial", href: "/history" },
+  { icon: Mic, label: "Nueva Nota", href: "/transcribir", isEnabled: true },
+  { icon: History, label: "Historial", href: "/historial" },
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];
 
 export function Sidebar() {
   const { isOpen, toggle } = useSidebar();
+  const pathname = usePathname();
 
   return (
     <>
@@ -62,20 +64,34 @@ export function Sidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 px-2 py-4 space-y-2">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.href}
-                variant={item.active ? "default" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  !isOpen && "justify-center px-2",
-                )}
-                aria-label={item.label}
-              >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {isOpen && <span className="ml-3 truncate">{item.label}</span>}
-              </Button>
-            ))}
+            {navigationItems.map((item) => {
+              const isActive = pathname === item.href;
+
+              const button = (
+                <Button
+                  variant={isActive ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    !isOpen && "justify-center px-2",
+                  )}
+                  aria-label={item.label}
+                  disabled={item.isEnabled === false}
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {isOpen && (
+                    <span className="ml-3 truncate">{item.label}</span>
+                  )}
+                </Button>
+              );
+
+              return item.isEnabled === false ? (
+                <div key={item.href}>{button}</div>
+              ) : (
+                <Link key={item.href} href={item.href}>
+                  {button}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </aside>

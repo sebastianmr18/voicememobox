@@ -14,26 +14,42 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useTranscriptionContext } from "@/context/TranscriptionContext";
+import { useSession } from "next-auth/react";
+import { hashEmail } from "@/lib/hash";
+import { redirect } from "next/navigation";
 
 interface UploadMemoCardProps {
   isUploading: boolean;
   setIsUploading: (isUploading: boolean) => void;
 }
 
-export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardProps) {
-  const [isRecording, setIsRecording] = useState(false);  
+export function UploadMemoCard({
+  isUploading,
+  setIsUploading,
+}: UploadMemoCardProps) {
+  const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { addTranscription } = useTranscriptionContext();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+  const email = session?.user?.email ?? "anonymous";
 
   const waitForTranscript = async (
     filename: string,
   ): Promise<string | null> => {
+    const userId = await hashEmail(email);
     for (let i = 0; i < 20; i++) {
-      const res = await fetch(`/api/transcription?filename=${filename}`);
+      const res = await fetch(
+        `/api/transcription?userId=${userId}&filename=${filename}`,
+      );
       const data = await res.json();
       if (data.transcript) return data.transcript;
       await new Promise((r) => setTimeout(r, 15000));
@@ -54,7 +70,8 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
 
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunks, { type: "audio/wav" });
-        await uploadAudio(audioBlob);
+        const userId = await hashEmail(email);
+        await uploadAudio(audioBlob, userId);
         stream.getTracks().forEach((track) => track.stop());
       };
 
@@ -89,12 +106,13 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      await uploadAudio(file);
+      const userId = await hashEmail(email);
+      await uploadAudio(file, userId);
     }
   };
 
-  const uploadAudio = async (audioData: Blob | File, userId = "anonymous") => {
-    setIsUploading(true);    
+  const uploadAudio = async (audioData: Blob | File, userId: string) => {
+    setIsUploading(true);
     try {
       // Solicitud de URL prefirmada
       const fileType = audioData.type;
@@ -107,7 +125,7 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
       const uploadRes = await axios.put(url, audioData, {
         headers: {
           "Content-Type": fileType,
-        }
+        },
       });
 
       if (uploadRes.status !== 200) throw new Error("Upload failed");
@@ -135,7 +153,7 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
       });
     } finally {
       setIsUploading(false);
-      setRecordingTime(0);      
+      setRecordingTime(0);
     }
   };
 
@@ -162,7 +180,9 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
           // Estado de carga durante la subida
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-            <p className="text-lg font-medium">Se esta procesando tu nota de voz...</p>
+            <p className="text-lg font-medium">
+              Se esta procesando tu nota de voz...
+            </p>
             <p className="text-sm text-gray-500">
               Por favor espera, esto puede tardar unos momentos.
             </p>
@@ -190,7 +210,11 @@ export function UploadMemoCard({ isUploading, setIsUploading }: UploadMemoCardPr
                     Comenzar Grabación
                   </Button>
                 ) : (
-                  <Button onClick={stopRecording} size="lg" variant="destructive">
+                  <Button
+                    onClick={stopRecording}
+                    size="lg"
+                    variant="destructive"
+                  >
                     <MicOff className="h-5 w-5 mr-2" />
                     Detener Grabación
                   </Button>
