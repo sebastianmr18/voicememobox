@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Mic, FileText, Clock, Shield, Search, Download } from "lucide-react"
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Mic, FileText, Clock, Shield, Search, Download } from "lucide-react";
 
 const features = [
   {
@@ -22,7 +22,8 @@ const features = [
   {
     icon: Clock,
     title: "Procesamiento Rápido",
-    description: "Obtén tus transcripciones en menos de 2 minutos. Procesamiento en tiempo real con feedback visual.",
+    description:
+      "Obtén tus transcripciones en menos de 2 minutos. Procesamiento en tiempo real con feedback visual.",
     color: "bg-green-50 text-green-600",
   },
   {
@@ -35,16 +36,18 @@ const features = [
   {
     icon: Search,
     title: "Búsqueda Inteligente",
-    description: "Encuentra cualquier transcripción al instante. Busca por contenido, fecha, duración o formato.",
+    description:
+      "Encuentra cualquier transcripción al instante. Busca por contenido, fecha, duración o formato.",
     color: "bg-orange-50 text-orange-600",
   },
   {
     icon: Download,
     title: "Exportación Flexible",
-    description: "Exporta tus transcripciones en múltiples formatos: TXT, PDF. Comparte fácilmente.",
+    description:
+      "Exporta tus transcripciones en múltiples formatos: TXT, PDF. Comparte fácilmente.",
     color: "bg-teal-50 text-teal-600",
   },
-]
+];
 
 export function LandingFeatures() {
   return (
@@ -59,10 +62,12 @@ export function LandingFeatures() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Todo lo que necesitas para <span className="text-red-600">transcribir</span>
+            Todo lo que necesitas para{" "}
+            <span className="text-red-600">transcribir</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Una plataforma completa que convierte tus ideas habladas en texto organizado y accesible
+            Una plataforma completa que convierte tus ideas habladas en texto
+            organizado y accesible
           </p>
         </motion.div>
 
@@ -84,9 +89,13 @@ export function LandingFeatures() {
                     <feature.icon className="h-8 w-8" />
                   </motion.div>
 
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {feature.title}
+                  </h3>
 
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -94,5 +103,5 @@ export function LandingFeatures() {
         </div>
       </div>
     </section>
-  )
+  );
 }

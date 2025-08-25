@@ -6,10 +6,10 @@ import { LandingCTA } from "@/components/home/landingCTA";
 
 export default function HomePage() {
   return (
-  <div className="min-h-screen bg-white">
-    <LandingHero />
-    <LandingFeatures />
-    <LandingCTA />
-  </div>
-  )
+    <div className="min-h-screen bg-white">
+      <LandingHero />
+      <LandingFeatures />
+      <LandingCTA />
+    </div>
+  );
 }

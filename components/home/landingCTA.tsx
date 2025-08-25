@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Mic, ArrowRight, CheckCircle } from "lucide-react"
-import Link from "next/link"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Mic, ArrowRight, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const benefits = [
   "Procesamiento en menos de 2 minutos",
@@ -13,7 +13,7 @@ const benefits = [
   "Almacenamiento de audios y transcripciones en la nube por 30 días",
   "Hasta 5 transcripciones cada 24 horas",
   "Soporte técnico y constante mejoras en la plataforma",
-]
+];
 
 export function LandingCTA() {
   return (
@@ -66,7 +66,8 @@ export function LandingCTA() {
               </h2>
 
               <p className="text-xl text-red-100 leading-relaxed">
-                Haz parte de los profesionales que ya están ahorrando horas de trabajo manual con VoiceMemoBox
+                Haz parte de los profesionales que ya están ahorrando horas de
+                trabajo manual con VoiceMemoBox
               </p>
             </div>
 
@@ -105,7 +106,9 @@ export function LandingCTA() {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <h3 className="text-2xl font-bold mb-6">Todo incluido desde el primer día:</h3>
+            <h3 className="text-2xl font-bold mb-6">
+              Todo incluido desde el primer día:
+            </h3>
 
             <div className="grid gap-4">
               {benefits.map((benefit, index) => (
@@ -132,12 +135,13 @@ export function LandingCTA() {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-8"
             >
               <p className="text-center text-red-100">
-                <strong>Siempre te escuchamos</strong> - Si no estás satisfecho, nuestro equipo atenderá tus preguntas
+                <strong>Siempre te escuchamos</strong> - Si no estás satisfecho,
+                nuestro equipo atenderá tus preguntas
               </p>
             </motion.div>
           </motion.div>
         </div>
       </div>
     </section>
-  )
+  );
 }

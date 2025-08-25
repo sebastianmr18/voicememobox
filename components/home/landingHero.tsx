@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Mic, Play, ArrowRight, Sparkles } from "lucide-react"
-import Link from "next/link"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Mic, Play, ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export function LandingHero() {
   return (
@@ -57,7 +57,9 @@ export function LandingHero() {
               className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2"
             >
               <Sparkles className="h-4 w-4 text-yellow-300" />
-              <span className="text-sm font-medium">Impulsado con Tecnología AWS Transcribe</span>
+              <span className="text-sm font-medium">
+                Impulsado con Tecnología AWS Transcribe
+              </span>
             </motion.div>
 
             {/* Main Heading */}
@@ -68,7 +70,8 @@ export function LandingHero() {
                 transition={{ duration: 0.8, delay: 0.3 }}
                 className="text-4xl lg:text-6xl font-bold leading-tight"
               >
-                Transforma tus <span className="text-yellow-300">ideas</span> en texto al instante
+                Transforma tus <span className="text-yellow-300">ideas</span> en
+                texto al instante
               </motion.h1>
 
               <motion.p
@@ -77,7 +80,8 @@ export function LandingHero() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="text-xl lg:text-2xl text-red-100 leading-relaxed"
               >
-                La plataforma más inteligente para convertir tus notas de voz en transcripciones precisas y organizadas
+                La plataforma más inteligente para convertir tus notas de voz en
+                transcripciones precisas y organizadas
               </motion.p>
             </div>
 
@@ -189,5 +193,5 @@ export function LandingHero() {
         </div>
       </div>
     </section>
-  )
+  );
 }
