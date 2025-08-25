@@ -15,13 +15,14 @@ const s3 = new S3Client({
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId") ?? "anonymous";
   const filename = searchParams.get("filename");
   const bucket = process.env.AWS_BUCKET_NAME!;
 
   if (!filename)
     return NextResponse.json({ error: "Missing filename" }, { status: 400 });
 
-  const key = `transcriptions/${filename}.json`;
+  const key = `transcriptions/${userId}/${filename}.json`;
 
   try {
     const res = await s3.send(
